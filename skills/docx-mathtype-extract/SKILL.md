@@ -22,7 +22,7 @@ MathType 在 docx 里有两种存储：
 很多 MathType 公式在 docx 的段落 XML 里**留有纯文本等价物**（尤其简单公式、单位、数字）。
 ```python
 from docx import Document
-doc = Document('赛题.docx')
+doc = Document('源文件.docx')
 for p in doc.paragraphs:
     if any(k in p.text for k in ['系数', '参数', '表']):   # ← 换成你要找的参数名
         print(repr(p.text))
@@ -33,7 +33,7 @@ for p in doc.paragraphs:
 WMF 内部仍可能含 ASCII/UTF-16 的数字与变量名（公式的文字部分）。解压 docx 后扫所有 wmf：
 ```python
 import zipfile, re
-z = zipfile.ZipFile('赛题.docx')
+z = zipfile.ZipFile('源文件.docx')
 for n in z.namelist():
     if n.startswith('word/media/') and n.endswith('.wmf'):
         data = z.read(n)
@@ -45,7 +45,7 @@ for n in z.namelist():
 ### 第 3 级：document.xml 交叉校验
 `word/document.xml` 里公式区可能是 `m:oMath`（Office Math，非 OLE）或文本。
 ```bash
-unzip -o 赛题.docx word/document.xml -d /tmp/docx
+unzip -o 源文件.docx word/document.xml -d /tmp/docx
 grep -o '<m:t>[^<]*</m:t>' /tmp/docx/word/document.xml | head -200
 ```
 `m:t` 是 Math 文本节点，常含公式里的字母变量与数字。
@@ -53,7 +53,7 @@ grep -o '<m:t>[^<]*</m:t>' /tmp/docx/word/document.xml | head -200
 ## 配套脚本
 `scripts/extract_mathtype_params.py`：自动跑完三级回退，输出每个 media wmf 的数字候选 + document.xml 的 m:t 节点，供人工定参。用法：
 ```bash
-python extract_mathtype_params.py <赛题.docx> [--out report.md]
+python extract_mathtype_params.py <源文件.docx> [--out report.md]
 ```
 
 ## 提取后必做：物理量级复核

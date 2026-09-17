@@ -9,7 +9,7 @@ media/*.wmf，python-docx 读不到内容。本脚本走：
   3) 列出 word/embeddings/oleObject*.bin 的存在（仅提示，不解析二进制）
 
 用法:
-  python extract_mathtype_params.py <赛题.docx> [--out report.md]
+  python extract_mathtype_params.py <源文件.docx> [--out report.md]
 """
 import sys
 import re
@@ -75,7 +75,7 @@ def render(report):
 
 def main():
     ap = argparse.ArgumentParser(description='docx MathType 参数三级回退提取')
-    ap.add_argument('docx', help='赛题/论文 .docx 路径')
+    ap.add_argument('docx', help='待提取的 .docx 路径')
     ap.add_argument('--out', help='报告输出路径 (markdown)')
     a = ap.parse_args()
 
